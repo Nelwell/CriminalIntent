@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +53,7 @@ public class CrimeListFragment extends Fragment {
         // Initialized member variables
         private TextView mTitleTextView;
         private TextView mDateTextView;
+        private ImageView mSolvedImageView;
 
         // CrimeHolder constructor, passes list_item_crime into super ViewHolder
         public CrimeHolder(LayoutInflater inflater, ViewGroup parent) {
@@ -60,9 +62,10 @@ public class CrimeListFragment extends Fragment {
             // Listener implemented by CrimeHolder on the View (itemView), returns event to CrimeHolder
             itemView.setOnClickListener(this);
 
-            // Gets references to String resource IDs
+            // Gets references to resource IDs
             mTitleTextView = itemView.findViewById(R.id.crime_title);
             mDateTextView = itemView.findViewById(R.id.crime_date);
+            mSolvedImageView = itemView.findViewById(R.id.crime_solved);
         }
 
         // Called each time a new Crime needs displayed in CrimeHolder
@@ -70,6 +73,8 @@ public class CrimeListFragment extends Fragment {
             mCrime = crime;
             mTitleTextView.setText(mCrime.getTitle());
             mDateTextView.setText(mCrime.getDate().toString());
+            // Sets visibility of crime solved image based on if "is solved" box is checked
+            mSolvedImageView.setVisibility(crime.isSolved() ? View.VISIBLE : View.GONE);
         }
 
         // Listener to display Toast when a Crime object is clicked on in the CrimeHolder
