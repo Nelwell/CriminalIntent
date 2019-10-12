@@ -1,5 +1,6 @@
 package android.bignerdranch.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,15 +35,27 @@ public class CrimeListFragment extends Fragment {
         return view;
     }
 
+    // Overrides onResume() and instead calls updateUI method to reload list with newest data
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
     // Connects Adapter to RecyclerView
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
 
-        // new CrimeAdapter
-        mAdapter = new CrimeAdapter(crimes);
-        // Sets Adapter on RecyclerView
-        mCrimeRecyclerView.setAdapter(mAdapter);
+        // Checks if CrimeAdapter is already set up
+        if (mAdapter == null) {
+            // new CrimeAdapter
+            mAdapter = new CrimeAdapter(crimes);
+            // Sets Adapter on RecyclerView
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     // ViewHolder that will inflate list_item_crime layout, and pull out TextViews to be bound
@@ -77,10 +90,11 @@ public class CrimeListFragment extends Fragment {
             mSolvedImageView.setVisibility(crime.isSolved() ? View.VISIBLE : View.GONE);
         }
 
-        // Listener to display Toast when a Crime object is clicked on in the CrimeHolder
         @Override
         public void onClick(View view) {
-            Toast.makeText(getActivity(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+            // Passes crimeID from the newIntent method created in CrimeActivity
+            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            startActivity(intent);
         }
     }
 
